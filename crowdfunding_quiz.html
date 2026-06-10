@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>クラウドファンディング適性診断 | NOSACHI</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    background: #f5f7fa;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  .container {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.08);
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 560px;
+  }
+  .brand {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: #1a3a6b;
+    margin-bottom: 1.5rem;
+  }
+  .progress-bg { height: 4px; background: #e8ecf2; border-radius: 2px; margin-bottom: 1.75rem; }
+  .progress-fill { height: 4px; background: #1a3a6b; border-radius: 2px; transition: width 0.4s ease; }
+  .step-label { font-size: 12px; color: #8a94a6; margin-bottom: 0.5rem; letter-spacing: 0.04em; }
+  .question { font-size: 19px; font-weight: 600; color: #111827; line-height: 1.5; margin-bottom: 0.5rem; }
+  .sub { font-size: 13px; color: #6b7280; margin-bottom: 1.75rem; line-height: 1.7; }
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px;
+    color: #374151;
+    transition: border-color 0.15s, background 0.15s;
+    line-height: 1.5;
+    font-family: inherit;
+  }
+  .opt-btn:hover { border-color: #1a3a6b; background: #f0f4fa; }
+  .opt-btn.selected { border-color: #1a3a6b; background: #eef2f9; color: #1a3a6b; font-weight: 600; }
+  .nav-row { display: flex; justify-content: flex-end; margin-top: 1.75rem; }
+  .next-btn {
+    background: #1a3a6b;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0.35;
+    pointer-events: none;
+    transition: opacity 0.2s, background 0.2s;
+    font-family: inherit;
+  }
+  .next-btn.active { opacity: 1; pointer-events: auto; }
+  .next-btn:hover { background: #14305c; }
+
+  /* Result */
+  .result-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #eef2f9; color: #1a3a6b;
+    font-size: 12px; font-weight: 600;
+    padding: 5px 14px; border-radius: 20px;
+    margin-bottom: 1.25rem; letter-spacing: 0.04em;
+  }
+  .result-title { font-size: 22px; font-weight: 700; color: #111827; margin-bottom: 0.4rem; line-height: 1.4; }
+  .score-text { font-size: 13px; color: #9ca3af; margin-bottom: 1rem; }
+  .score-row { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .pill { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
+  .pill-green { background: #d1fae5; color: #065f46; }
+  .pill-amber { background: #fef3c7; color: #92400e; }
+  .pill-blue  { background: #dbeafe; color: #1e40af; }
+  .result-desc { font-size: 15px; color: #4b5563; line-height: 1.8; margin-bottom: 1.5rem; }
+  .section-label { font-size: 11px; font-weight: 700; color: #9ca3af; letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+  .advice-card {
+    background: #f8fafc;
+    border: 1px solid #e8ecf2;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .advice-title { font-size: 14px; font-weight: 600; color: #1a3a6b; margin-bottom: 0.3rem; display: flex; align-items: center; gap: 6px; }
+  .advice-body { font-size: 14px; color: #4b5563; line-height: 1.7; }
+  .cta-row { display: flex; gap: 10px; margin-top: 1.75rem; flex-wrap: wrap; }
+  .cta-primary {
+    background: #1a3a6b; color: #fff;
+    border: none; border-radius: 10px;
+    padding: 13px 26px; font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    text-decoration: none; display: inline-block;
+  }
+  .cta-primary:hover { background: #14305c; }
+  .cta-secondary {
+    background: #fff; color: #6b7280;
+    border: 1.5px solid #e2e8f0; border-radius: 10px;
+    padding: 13px 26px; font-size: 15px;
+    cursor: pointer; font-family: inherit;
+  }
+  .cta-secondary:hover { background: #f8fafc; }
+
+  @media (max-width: 480px) {
+    .container { padding: 2rem 1.25rem; }
+    .question { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="brand">NOSACHI — クラファン適性診断</div>
+
+  <!-- Quiz -->
+  <div id="quiz">
+    <div class="progress-bg"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+    <div class="step-label" id="step-label">STEP 1 / 7</div>
+    <div class="question" id="q-text"></div>
+    <div class="sub" id="q-sub"></div>
+    <div class="options" id="opts"></div>
+    <div class="nav-row"><button class="next-btn" id="next-btn">次へ →</button></div>
+  </div>
+
+  <!-- Result -->
+  <div id="result" style="display:none"></div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "提供したい商品・サービスはありますか？",
+    sub: "クラファンはリターン（お返し）設計が重要です。何を届けられるかが出発点になります。",
+    opts: [
+      { text: "はい、すでに具体的な商品・サービスがあります", score: 3 },
+      { text: "アイデアはあるが、まだ形になっていない", score: 2 },
+      { text: "商品はないが、活動やプロジェクトを支援してほしい", score: 1 },
+      { text: "まだ何も決まっていない", score: 0 }
+    ]
+  },
+  {
+    q: "クラファンを通じて一番実現したいことは？",
+    sub: "目的によって、向いているプラットフォームや戦略が変わります。",
+    opts: [
+      { text: "商品・サービスの販売・先行販売をしたい", score: 3 },
+      { text: "ブランド・事業のPRをしたい", score: 2 },
+      { text: "支援者リストを獲得して将来につなげたい", score: 2 },
+      { text: "資金調達が主な目的", score: 1 }
+    ]
+  },
+  {
+    q: "支援してくれそうな人は思い浮かびますか？",
+    sub: "最初の支援は身近な人から生まれることがほとんどです。",
+    opts: [
+      { text: "友人・知人・既存顧客など、すぐに10人以上思い浮かぶ", score: 3 },
+      { text: "数人は思い浮かぶが、広げる自信はない", score: 2 },
+      { text: "SNSフォロワーや読者がいるので反応しそう", score: 2 },
+      { text: "正直あまり思い浮かばない", score: 0 }
+    ]
+  },
+  {
+    q: "リターン（支援者へのお返し）のイメージはありますか？",
+    sub: "「何を返すか」が支援者の背中を押す最大のポイントです。",
+    opts: [
+      { text: "具体的なリターンが複数思い浮かんでいる", score: 3 },
+      { text: "大体のイメージはあるが、まだ詰め切れていない", score: 2 },
+      { text: "「感謝の言葉」くらいしか思いついていない", score: 1 },
+      { text: "リターンの概念がよくわからない", score: 0 }
+    ]
+  },
+  {
+    q: "プロジェクトの「なぜやるか」を説明できますか？",
+    sub: "共感を生むストーリーが、支援の動機になります。",
+    opts: [
+      { text: "情熱を持って話せる", score: 3 },
+      { text: "理由はあるが、うまく言語化できていない", score: 2 },
+      { text: "ビジネス的な理由はあるが、感情的な動機は薄い", score: 1 },
+      { text: "特に強い動機はない", score: 0 }
+    ]
+  },
+  {
+    q: "SNSや発信手段を持っていますか？",
+    sub: "プロジェクト公開後の拡散力が、成否を大きく左右します。",
+    opts: [
+      { text: "インスタ・X・LINEなどで定期的に発信している", score: 3 },
+      { text: "アカウントはあるが、あまり使えていない", score: 2 },
+      { text: "メールリストや既存顧客への連絡手段がある", score: 2 },
+      { text: "発信手段がほとんどない", score: 0 }
+    ]
+  },
+  {
+    q: "準備にどれくらい時間をかけられそうですか？",
+    sub: "ページ作成・告知・支援者対応など、公開前後で相応の工数がかかります。",
+    opts: [
+      { text: "1〜2ヶ月、しっかり準備する時間がある", score: 3 },
+      { text: "2〜3週間くらいなら確保できる", score: 2 },
+      { text: "正直、あまり時間が取れない", score: 1 },
+      { text: "すぐにでも公開したい", score: 0 }
+    ]
+  }
+];
+
+let current = 0, answers = [];
+
+function render() {
+  const q = questions[current];
+  document.getElementById('step-label').textContent = `STEP ${current+1} / ${questions.length}`;
+  document.getElementById('prog').style.width = `${(current / questions.length) * 100}%`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-sub').textContent = q.sub;
+  const optsEl = document.getElementById('opts');
+  optsEl.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn' + (answers[current] === i ? ' selected' : '');
+    btn.textContent = o.text;
+    btn.onclick = () => {
+      document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      answers[current] = i;
+      document.getElementById('next-btn').classList.add('active');
+    };
+    optsEl.appendChild(btn);
+  });
+  const nb = document.getElementById('next-btn');
+  nb.textContent = current === questions.length - 1 ? '結果を見る →' : '次へ →';
+  nb.className = 'next-btn' + (answers[current] !== undefined ? ' active' : '');
+}
+
+document.getElementById('next-btn').onclick = () => {
+  if (answers[current] === undefined) return;
+  if (current < questions.length - 1) { current++; render(); }
+  else showResult();
+};
+
+function showResult() {
+  const total = answers.reduce((s, ai, qi) => s + questions[qi].opts[ai].score, 0);
+  const max = questions.length * 3;
+  const pct = Math.round((total / max) * 100);
+
+  let level, title, desc, advices, pills;
+
+  if (pct >= 75) {
+    level = '今すぐ挑戦できます';
+    title = 'クラファン適性：高い';
+    desc = '商品・ストーリー・発信手段の3つが揃っています。あとは実行するだけです。まず「ドラフト作成」から始めると、一気にイメージが具体化します。';
+    pills = [{t:'商品・リターン ◎',c:'pill-green'},{t:'ストーリー ◎',c:'pill-green'},{t:'発信力 ◎',c:'pill-blue'}];
+    advices = [
+      { icon:'ti-rocket', title:'まずドラフトを作ろう', body:'プロジェクト概要と目標金額の設定からスタートを。30分でたたき台ができます。' },
+      { icon:'ti-users', title:'身近な人に声かけを', body:'公開直後の最初の支援が弾みをつけます。10人に「応援してもらえますか？」と先に伝えておきましょう。' },
+      { icon:'ti-brand-instagram', title:'SNSで告知準備を', body:'公開1〜2週間前からSNSで「準備中」投稿をして、期待感を高めておくと効果的です。' }
+    ];
+  } else if (pct >= 50) {
+    level = 'あと少しで準備完了';
+    title = 'クラファン適性：もう一歩';
+    desc = '可能性は十分あります。いくつかの要素をもう少し準備することで、成功確率がぐっと上がります。以下のポイントを整えてから進みましょう。';
+    pills = [{t:'基礎はある',c:'pill-amber'},{t:'準備で差がつく',c:'pill-amber'},{t:'伴走サポートあり',c:'pill-blue'}];
+    advices = [
+      { icon:'ti-gift', title:'リターンをもう一度考えよう', body:'支援者が「欲しい！」と思えるリターンが鍵です。体験・限定品・感謝状など3〜4種類を考えてみましょう。' },
+      { icon:'ti-pencil', title:'ストーリーを言語化しよう', body:'「なぜこれをやるのか」を200字でまとめてみてください。それがページのコアになります。' },
+      { icon:'ti-message-circle', title:'まず個別相談を', body:'プロジェクトの内容を聞かせていただければ、ドラフトを作って具体的なアドバイスができます。' }
+    ];
+  } else {
+    level = '今から一緒に準備しましょう';
+    title = 'クラファン適性：準備段階';
+    desc = '今すぐ始めるより、まず「何をやるか」を固めることが大切です。でも可能性がないわけではありません。一緒に整理すれば、見えてくるものがあります。';
+    pills = [{t:'アイデア段階',c:'pill-amber'},{t:'準備が必要',c:'pill-amber'},{t:'相談から始めよう',c:'pill-blue'}];
+    advices = [
+      { icon:'ti-bulb', title:'「何を届けたいか」から始めよう', body:'まずは商品・サービスのアイデアを紙に書き出してみましょう。小さくてもOKです。' },
+      { icon:'ti-heart', title:'動機を深掘りしよう', body:'「なぜやりたいのか」を誰かに話してみてください。話しながら自分でも整理されていきます。' },
+      { icon:'ti-message-circle', title:'まず話してみましょう', body:'アイデア段階でも大丈夫です。どんなことをしたいのか聞かせていただければ、一緒に考えます。' }
+    ];
+  }
+
+  document.getElementById('quiz').style.display = 'none';
+  const r = document.getElementById('result');
+  r.style.display = 'block';
+  r.innerHTML = `
+    <div class="result-badge"><i class="ti ti-checkup-list" style="font-size:14px"></i>診断完了</div>
+    <div class="result-title">${title}</div>
+    <div class="score-text">スコア: ${total} / ${max}（${pct}%）</div>
+    <div class="score-row">${pills.map(p=>`<span class="pill ${p.c}">${p.t}</span>`).join('')}</div>
+    <div class="result-desc">${desc}</div>
+    <div class="section-label">アドバイス</div>
+    ${advices.map(a=>`
+      <div class="advice-card">
+        <div class="advice-title"><i class="ti ${a.icon}" style="font-size:15px"></i>${a.title}</div>
+        <div class="advice-body">${a.body}</div>
+      </div>
+    `).join('')}
+    <div class="cta-row">
+      <a class="cta-primary" href="https://lin.ee/XXXXXXX" target="_blank">LINEで個別相談する →</a>
+      <button class="cta-secondary" onclick="location.reload()">もう一度診断する</button>
+    </div>
+  `;
+}
+
+render();
+</script>
+</body>
+</html>
